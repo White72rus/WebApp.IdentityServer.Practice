@@ -2,7 +2,7 @@
   "profiles": {
     "WebApp.Test.Api": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "applicationUrl": "https://localhost:9001;http://localhost:9000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

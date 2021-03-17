@@ -1,1 +1,31 @@
 ﻿
+* {
+    margin: 0;
+    -moz-box-sizing: inherit;
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+footer {
+    position: fixed;
+    bottom: 0px;
+}
+
+.menu {
+    padding: 10px;
+    font: normal 20px/normal Consolas, sans-serif;
+    margin-top: 50px;
+}
+
+.menu > a {
+    text-decoration: none;
+}
+
+.data {
+    font: normal 18px/normal Consolas, sans-serif;
+    padding: 0 50px;
+}

@@ -11,6 +11,7 @@ namespace WebApp.Test.Api.Controllers
     [ApiController]
     public class DataController : ControllerBase
     {
+        [Route("[action]")]
         public string GetData()
         {
             return "Data from API server";

@@ -19,7 +19,7 @@ namespace WebApp.Test.Api.Service
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-
+            services.AddHttpClient();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -28,6 +28,8 @@ namespace WebApp.Test.Api.Service
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseStaticFiles();
 
             app.UseRouting();
 

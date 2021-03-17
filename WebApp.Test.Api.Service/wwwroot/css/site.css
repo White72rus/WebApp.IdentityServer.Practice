@@ -1,0 +1,16 @@
+﻿
+* {
+    margin: 0;
+    -moz-box-sizing: inherit;
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+html {
+    box-sizing: border-box;
+}
+
+footer {
+    position: fixed;
+    bottom: 0px;
+}

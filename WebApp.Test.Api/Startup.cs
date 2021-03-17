@@ -18,7 +18,7 @@ namespace WebApp.Test.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddControllersWithViews();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -28,7 +28,13 @@ namespace WebApp.Test.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
