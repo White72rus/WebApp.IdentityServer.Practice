@@ -18,6 +18,7 @@ namespace WebApp.Test.Api.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllersWithViews();
 
         }
 
@@ -29,6 +30,10 @@ namespace WebApp.Test.Api.Service
             }
 
             app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

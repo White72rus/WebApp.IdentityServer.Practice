@@ -13,5 +13,10 @@ namespace WebApp.IdentityServer.Controllers
         {
             return View();
         }
+
+        private IActionResult GetData() {
+
+            return View();
+        }
     }
 }

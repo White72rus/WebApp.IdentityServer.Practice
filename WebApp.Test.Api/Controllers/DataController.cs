@@ -9,7 +9,11 @@ namespace WebApp.Test.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class DataController : ControllerBase
     {
+        public string GetData()
+        {
+            return "Data from API server";
+        }
     }
 }
