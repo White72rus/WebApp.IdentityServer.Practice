@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,7 +11,9 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using WebApp.IdentityServer.Infrastructure;
 
 namespace WebApp.IdentityServer
 {
@@ -23,10 +26,27 @@ namespace WebApp.IdentityServer
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+
+
+        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
         {
             services.AddControllersWithViews();
+
+            //services.AddIdentityServer().add;
+
+            if (env.IsDevelopment())
+            {
+                Console.WriteLine("\n\tDevelopment\n");
+            }
+
+            var connectionString = Configuration.GetConnectionString("Development");
+
+            services.AddDbContext<AppDbContext>(b => {
+                b.UseMySql(connectionString, option => {
+                    option.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
+                    option.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+                });
+            });
 
             services.AddSwaggerGen(c =>
             {
@@ -34,7 +54,6 @@ namespace WebApp.IdentityServer
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -48,7 +67,7 @@ namespace WebApp.IdentityServer
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {
