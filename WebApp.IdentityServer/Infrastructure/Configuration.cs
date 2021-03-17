@@ -1,12 +1,13 @@
 ﻿using IdentityModel;
 using IdentityServer4.Models;
+using System;
 using System.Collections.Generic;
 
 namespace WebApp.IdentityServer.Infrastructure
 {
     public static class Configuration
     {
-        public static IEnumerable<Client> GetClients() => 
+        internal static IEnumerable<Client> GetClients() => 
             // Создаем клиентов(учетки приложений) для IS4. 
             new List<Client> {
                 new Client()
@@ -18,6 +19,16 @@ namespace WebApp.IdentityServer.Infrastructure
                         "SMSISPortal",
                     },
                 }
+            };
+
+        internal static IEnumerable<ApiResource> GetApiResources() =>
+            new List<ApiResource> {
+                new ApiResource("SMSISPortal"),
+            };
+
+        internal static IEnumerable<IdentityResource> GetIdentityResources() => 
+            new List<IdentityResource> {
+                new IdentityResources.OpenId(),
             };
     }
 }

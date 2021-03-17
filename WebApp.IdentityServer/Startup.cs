@@ -21,25 +21,29 @@ namespace WebApp.IdentityServer
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            AppConfiguration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration AppConfiguration { get; }
 
 
 
-        public void ConfigureServices(IServiceCollection services, IWebHostEnvironment env)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
 
-            //services.AddIdentityServer().add;
+            services.AddIdentityServer()
+                .AddInMemoryClients(Configuration.GetClients())
+                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
+                .AddInMemoryApiResources(Configuration.GetApiResources())
+                .AddDeveloperSigningCredential();
 
-            if (env.IsDevelopment())
-            {
-                Console.WriteLine("\n\tDevelopment\n");
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    Console.WriteLine("\n\tDevelopment\n");
+            //}
 
-            var connectionString = Configuration.GetConnectionString("Development");
+            var connectionString = AppConfiguration.GetConnectionString("Development");
 
             services.AddDbContext<AppDbContext>(b => {
                 b.UseMySql(connectionString, option => {

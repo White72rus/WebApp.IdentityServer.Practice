@@ -10,6 +10,15 @@ namespace WebApp.IdentityServer.Infrastructure
 {
     public class AppDbContext : DbContext
     {
+        
         public DbSet<User> Users;
+
+        public AppDbContext()
+        {
+            Database.EnsureCreated();
+        }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        { }
     }
 }
