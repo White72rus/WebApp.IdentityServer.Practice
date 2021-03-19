@@ -30,7 +30,9 @@ async function fetchPost() {
         body: formData
     });
 
-    const data = await response.json();
+    const redirectUrl = response["url"];
+
+    window.location.replace(redirectUrl);
 
     if (response.ok === true) {
 

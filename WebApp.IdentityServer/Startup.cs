@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using WebApp.IdentityServer.DataLayer;
 using WebApp.IdentityServer.Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebApp.IdentityServer
 {
@@ -26,29 +27,37 @@ namespace WebApp.IdentityServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
-
-            services.AddIdentityServer(option => {
-                option.UserInteraction.LoginUrl = "https://localhost:5001/auth/login";
-            })
-                .AddInMemoryClients(IdentityServerConfiguration.GetClients())
-                .AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
-                .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
-                .AddInMemoryApiScopes(IdentityServerConfiguration.GetApiScopes())
-                .AddJwtBearerClientAuthentication()
-                .AddDeveloperSigningCredential();
-
             var connectionString = AppConfiguration.GetConnectionString("Development");
-
             services.AddDbContext<AppDbContext>(config => {
                 config.UseMySql(connectionString, option => {
                     option.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
                     option.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
                 });
             })
-                //.AddIdentity()
-                //.AddEntityFrameworkStores()
-                ;
+            .AddIdentity<IdentityUser, IdentityRole>(config => {
+                config.Password.RequireDigit = true;
+                config.Password.RequireLowercase = true;
+                config.Password.RequireUppercase = false;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequiredUniqueChars = 1;
+                config.Password.RequiredLength = 6;
+            }).AddEntityFrameworkStores<AppDbContext>();
+
+
+            services.AddIdentityServer(option => {
+                option.UserInteraction.LoginUrl = "/auth/login";    //https://localhost:5001
+            })
+                .AddAspNetIdentity<IdentityUser>()
+                .AddInMemoryClients(IdentityServerConfiguration.GetClients())
+                .AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
+                .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
+                .AddInMemoryApiScopes(IdentityServerConfiguration.GetApiScopes())
+                //.AddJwtBearerClientAuthentication()
+                .AddDeveloperSigningCredential();
+
+            
+
+            services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, UserClaimsPrincipalFactory<IdentityUser>>();
 
             services.AddSwaggerGen(c =>
             {
@@ -56,6 +65,8 @@ namespace WebApp.IdentityServer
             });
 
             services.AddCors();
+
+            services.AddControllersWithViews();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

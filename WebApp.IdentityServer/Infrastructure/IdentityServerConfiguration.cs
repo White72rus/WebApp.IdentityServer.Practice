@@ -37,7 +37,8 @@ namespace WebApp.IdentityServer.Infrastructure
                         IdentityServerConstants.StandardScopes.Profile,
                     },
 
-                    RedirectUris = { "https://localhost:10001/signin-oidc", "http://localhost:10000/signin-oidc" },
+                    RedirectUris = { "https://localhost:10001/signin-oidc" },
+                    RequireConsent = false,
                 }
             };
 
