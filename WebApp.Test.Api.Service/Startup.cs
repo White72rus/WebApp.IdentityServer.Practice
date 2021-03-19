@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +13,9 @@ namespace WebApp.Test.Api.Service
     {
         private readonly IConfiguration _configyration;
 
+        private const string CS = "oidc";
+        private const string TYPE = "code";
+
         public Startup(IConfiguration configyration)
         {
             _configyration = configyration;
@@ -18,6 +23,19 @@ namespace WebApp.Test.Api.Service
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(option => {
+                option.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = CS;
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddOpenIdConnect(CS, option => {
+                    option.Authority = "https://localhost:5001";
+                    option.ClientId = "web_site";
+                    option.ClientSecret = "web_site_secret";
+                    option.SaveTokens = true;
+                    option.ResponseType = TYPE;
+                });
+
             services.AddControllersWithViews();
             services.AddHttpClient();
         }
@@ -28,6 +46,16 @@ namespace WebApp.Test.Api.Service
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.Strict,
+                HttpOnly = HttpOnlyPolicy.Always,
+                // Use "Always" for only HTTPS
+                // Use "None" for only HTTP
+                // Use "SameAsRequest" for HTTPS and HTTP in priority "HTTP"
+                Secure = CookieSecurePolicy.SameAsRequest,
+            });
 
             app.UseStaticFiles();
 

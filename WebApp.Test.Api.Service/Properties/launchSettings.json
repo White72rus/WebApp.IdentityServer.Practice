@@ -1,12 +1,13 @@
 ﻿{
-  "profiles": {
-    "WebApp.Test.Api.Service": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "applicationUrl": "https://localhost:10001;http://localhost:10000",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+    "profiles": {
+        "WebApp.Test.Api.Service": {
+            "commandName": "Project",
+            "launchBrowser": true,
+            "launchUrl": "https://localhost:10001/home/",
+            "applicationUrl": "https://localhost:10001;http://localhost:10000",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        }
     }
-  }
 }

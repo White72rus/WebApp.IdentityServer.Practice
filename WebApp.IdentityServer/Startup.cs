@@ -1,18 +1,14 @@
+using System;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
+
+using WebApp.IdentityServer.DataLayer;
 using WebApp.IdentityServer.Infrastructure;
 
 namespace WebApp.IdentityServer
@@ -32,30 +28,34 @@ namespace WebApp.IdentityServer
         {
             services.AddControllersWithViews();
 
-            services.AddIdentityServer()
-                .AddInMemoryClients(Configuration.GetClients())
-                .AddInMemoryIdentityResources(Configuration.GetIdentityResources())
-                .AddInMemoryApiResources(Configuration.GetApiResources())
+            services.AddIdentityServer(option => {
+                option.UserInteraction.LoginUrl = "https://localhost:5001/auth/login";
+            })
+                .AddInMemoryClients(IdentityServerConfiguration.GetClients())
+                .AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
+                .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
+                .AddInMemoryApiScopes(IdentityServerConfiguration.GetApiScopes())
+                .AddJwtBearerClientAuthentication()
                 .AddDeveloperSigningCredential();
-
-            //if (env.IsDevelopment())
-            //{
-            //    Console.WriteLine("\n\tDevelopment\n");
-            //}
 
             var connectionString = AppConfiguration.GetConnectionString("Development");
 
-            services.AddDbContext<AppDbContext>(b => {
-                b.UseMySql(connectionString, option => {
+            services.AddDbContext<AppDbContext>(config => {
+                config.UseMySql(connectionString, option => {
                     option.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name);
                     option.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
                 });
-            });
+            })
+                //.AddIdentity()
+                //.AddEntityFrameworkStores()
+                ;
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApp.IdentityServer", Version = "v1" });
             });
+
+            services.AddCors();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,11 +66,24 @@ namespace WebApp.IdentityServer
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApp.IdentityServer v1"));
             }
-
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
+
+            app.UseCors(builder =>
+                builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+            );
 
             app.UseRouting();
 
+            app.Use(async (context, next) => {
+
+                await next.Invoke();
+            });
+
+            //app.UseAuthentication();
+            //app.UseAuthorization();
             app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>

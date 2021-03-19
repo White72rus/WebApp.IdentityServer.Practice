@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApp.IdentityServer.Models
+namespace WebApp.IdentityServer.DataLayer.Entityes
 {
     public class User
     {

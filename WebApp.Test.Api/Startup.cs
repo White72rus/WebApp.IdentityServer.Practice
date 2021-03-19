@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,6 +19,13 @@ namespace WebApp.Test.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config => {
+                    config.Authority = "https://localhost:5001";
+                    config.Audience = "smsis.portal";
+                });
+
             services.AddControllersWithViews();
         }
 
