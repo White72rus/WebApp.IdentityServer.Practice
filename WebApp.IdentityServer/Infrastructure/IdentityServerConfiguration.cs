@@ -9,6 +9,7 @@ namespace WebApp.IdentityServer.Infrastructure
     internal static class IdentityServerConfiguration
     {
         private const string URL = "/signin-oidc";
+
         internal static IEnumerable<Client> GetClients() => 
             // Создаем клиентов(учетки приложений) для IS4. 
             new List<Client> {
@@ -37,8 +38,9 @@ namespace WebApp.IdentityServer.Infrastructure
                         IdentityServerConstants.StandardScopes.Profile,
                     },
 
-                    RedirectUris = { "https://localhost:10001/signin-oidc" },
+                    RedirectUris = { $"https://localhost:10001{URL}" },
                     RequireConsent = false,
+                    
                 }
             };
 

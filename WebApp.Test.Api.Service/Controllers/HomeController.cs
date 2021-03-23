@@ -1,6 +1,8 @@
 ﻿using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -22,9 +24,21 @@ namespace WebApp.IdentityServer.Controllers
         }
 
         [Route("[action]")]
-        [Authorize]
+        [Authorize(Policy = "User")]
         public IActionResult Secret()
         {
+            return View();
+        }
+
+        [Route("[action]")]
+        [Authorize]
+        //[Authorize(Policy = "Administrator")]
+        public async Task<IActionResult> Admin()
+        {
+            var jsonToken = await HttpContext.GetTokenAsync("access_token");
+
+            var token = new JwtSecurityTokenHandler().ReadToken(jsonToken) as JwtSecurityToken;
+
             return View();
         }
 
@@ -57,6 +71,12 @@ namespace WebApp.IdentityServer.Controllers
                 ViewBag.Message = await httpResponse.Content.ReadAsStringAsync();
             }
 
+            return View();
+        }
+
+        [Route("[action]")]
+        public IActionResult AccessDeniedMy()
+        {
             return View();
         }
     }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
@@ -6,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Security.Claims;
 
 namespace WebApp.Test.Api.Service
 {
@@ -27,7 +30,13 @@ namespace WebApp.Test.Api.Service
                 option.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 option.DefaultChallengeScheme = CS;
                 })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, optios => {
+                    optios.Cookie = new CookieBuilder() {
+                        HttpOnly = true,
+                        MaxAge = TimeSpan.FromMinutes(5),
+                    };
+                    //optios.AccessDeniedPath = "/Home/AccessDeniedMy/";
+                })
                 .AddOpenIdConnect(CS, option => {
                     option.Authority = "https://localhost:5001";
                     option.ClientId = "web_site";
@@ -35,6 +44,15 @@ namespace WebApp.Test.Api.Service
                     option.SaveTokens = true;
                     option.ResponseType = TYPE;
                 });
+
+            services.AddAuthorization(config => {
+                config.AddPolicy("Administrator", config => {
+                    config.RequireClaim(ClaimTypes.Role, "Administrator");
+                });
+                config.AddPolicy("User", config => {
+                    config.RequireClaim(ClaimTypes.Role, "User");
+                });
+            });
 
             services.AddControllersWithViews();
             services.AddHttpClient();

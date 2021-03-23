@@ -24,7 +24,6 @@ namespace WebApp.IdentityServer
         public IConfiguration AppConfiguration { get; }
 
 
-
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = AppConfiguration.GetConnectionString("Development");
@@ -52,12 +51,10 @@ namespace WebApp.IdentityServer
                 .AddInMemoryApiResources(IdentityServerConfiguration.GetApiResources())
                 .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
                 .AddInMemoryApiScopes(IdentityServerConfiguration.GetApiScopes())
-                //.AddJwtBearerClientAuthentication()
+                .AddJwtBearerClientAuthentication()
                 .AddDeveloperSigningCredential();
 
-            
-
-            services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, UserClaimsPrincipalFactory<IdentityUser>>();
+            //services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, UserClaimsPrincipalFactory<IdentityUser>>();
 
             services.AddSwaggerGen(c =>
             {
