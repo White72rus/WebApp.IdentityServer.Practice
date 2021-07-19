@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using WebApp.IdentityServer.DataLayer;
 using WebApp.IdentityServer.Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using IdentityServer4.Services;
+using System.Threading.Tasks;
 
 namespace WebApp.IdentityServer
 {
@@ -26,6 +28,8 @@ namespace WebApp.IdentityServer
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<UserService>();
+
             var connectionString = AppConfiguration.GetConnectionString("Development");
             services.AddDbContext<AppDbContext>(config => {
                 config.UseMySql(connectionString, option => {
@@ -45,6 +49,7 @@ namespace WebApp.IdentityServer
 
             services.AddIdentityServer(option => {
                 option.UserInteraction.LoginUrl = "/auth/login";    //https://localhost:5001
+                option.Authentication.CookieLifetime = TimeSpan.FromMinutes(5);
             })
                 .AddAspNetIdentity<IdentityUser>()
                 .AddInMemoryClients(IdentityServerConfiguration.GetClients())
@@ -52,6 +57,8 @@ namespace WebApp.IdentityServer
                 .AddInMemoryIdentityResources(IdentityServerConfiguration.GetIdentityResources())
                 .AddInMemoryApiScopes(IdentityServerConfiguration.GetApiScopes())
                 .AddJwtBearerClientAuthentication()
+                .AddProfileService<ProfileService>()
+                //.AddCorsPolicyService<CorsPolicyService>()
                 .AddDeveloperSigningCredential();
 
             //services.AddScoped<IUserClaimsPrincipalFactory<IdentityUser>, UserClaimsPrincipalFactory<IdentityUser>>();
@@ -61,7 +68,15 @@ namespace WebApp.IdentityServer
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApp.IdentityServer", Version = "v1" });
             });
 
-            services.AddCors();
+            services.AddCors(option => {
+                option.AddPolicy("MyCorsPolicy", builder => builder
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithOrigins("http://localhost:5010", "https://localhost:5010", 
+                "http://localhost", "https://localhost", "http://ims-test", 
+                "http://localhost:9000", "https://localhost:9001", "http://localhost:10000", "https://localhost:10001")
+                );
+            });
 
             services.AddControllersWithViews();
         }
@@ -74,21 +89,27 @@ namespace WebApp.IdentityServer
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApp.IdentityServer v1"));
             }
-            app.UseStaticFiles();
-            app.UseHttpsRedirection();
-
-            app.UseCors(builder =>
-                builder.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-            );
-
-            app.UseRouting();
 
             app.Use(async (context, next) => {
 
+                var method = context.Request.Method;
+
+                if (method == "OPTIONS")
+                {
+                    Console.WriteLine("Method: " + method);
+                }
+
                 await next.Invoke();
             });
+
+            app.UseStaticFiles();
+            //app.UseHttpsRedirection();
+
+            app.UseCors("MyCorsPolicy");
+
+            app.UseRouting();
+
+            
 
             //app.UseAuthentication();
             //app.UseAuthorization();
@@ -98,6 +119,14 @@ namespace WebApp.IdentityServer
             {
                 endpoints.MapDefaultControllerRoute();
             });
+        }
+    }
+
+    internal class CorsPolicyService : ICorsPolicyService
+    {
+        public Task<bool> IsOriginAllowedAsync(string origin)
+        {
+            throw new NotImplementedException();
         }
     }
 }

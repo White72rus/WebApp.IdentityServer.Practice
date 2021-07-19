@@ -18,7 +18,32 @@ namespace WebApp.IdentityServer.Infrastructure
                     Enabled = true,
                     ClientId = "smsis_portal_web",
                     ClientSecrets = {new Secret("smsis_portal_web".ToSha256())},
+                    AllowedGrantTypes = GrantTypes.Code,
+                    UserSsoLifetime = 300,
+                    AllowedScopes = {
+                        "smsis.portal",
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                    },
+
+                    //RedirectUris = { $"http://localhost:5010{URL}" },
+                    RedirectUris = { $"http://ims-test{URL}" },
+                    RequireConsent = false,
+
+                    AllowedCorsOrigins = new List<string>(){
+                        "http://localhost:5010",
+                        "https://localhost:5010",
+                        "http://localhost",
+                        "https://localhost",
+                    },
+                },
+                new Client()
+                {
+                    Enabled = true,
+                    ClientId = "api_web",
+                    ClientSecrets = {new Secret("smsis_portal_web".ToSha256())},
                     AllowedGrantTypes = GrantTypes.ClientCredentials,
+                    UserSsoLifetime = 300,
                     AllowedScopes = {
                         "smsis.portal",
                         IdentityServerConstants.StandardScopes.OpenId,
@@ -31,6 +56,10 @@ namespace WebApp.IdentityServer.Infrastructure
                     ClientId = "web_site",
                     ClientSecrets = {new Secret("web_site_secret".ToSha256())},
                     AllowedGrantTypes = GrantTypes.Code,
+                    //AccessTokenLifetime = 300,
+                    UserSsoLifetime = 300,
+                    //AlwaysIncludeUserClaimsInIdToken = true,
+
                     AllowedScopes = {
                         "web.site",
                         "smsis.portal",
@@ -39,8 +68,7 @@ namespace WebApp.IdentityServer.Infrastructure
                     },
 
                     RedirectUris = { $"https://localhost:10001{URL}" },
-                    RequireConsent = false,
-                    
+                    RequireConsent = false,  
                 }
             };
 

@@ -1,0 +1,28 @@
+﻿@{
+
+}
+<div class="claims-container">
+    <h1>Claims</h1>
+
+    <partial name="_menu" />
+    <div class="claims-base">
+        @foreach (var item in ViewBag.Claims)
+        {
+            <div class="token-wrap">
+                <div class="header">
+                    <p>@item.Name <span>@item.Claims.Count</span></p>
+                </div>
+                <div class="token-str">
+                    <textarea>@item.Token</textarea>
+                </div>
+                <div class="token-claims">
+                    @foreach (var claim in item.Claims)
+                    {
+                        <p>@claim</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

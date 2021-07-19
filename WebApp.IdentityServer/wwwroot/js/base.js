@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function fetchPost() {
+    const nav = navigator;
+    const appName = nav.userAgent;
     const formData = new FormData();
 
     const login = document.querySelector(".login").value;
@@ -20,7 +22,7 @@ async function fetchPost() {
     formData.append("Password", pass);
     formData.append("ReturnUrl", url);
 
-    const response = await fetch("https://localhost:5001/auth/login", {
+    const response = await fetch("http://localhost:5000/auth/login", {
         credentials: "include",
         method: "POST",
         headers: {
@@ -32,11 +34,14 @@ async function fetchPost() {
 
     const redirectUrl = response["url"];
 
-    window.location.replace(redirectUrl);
-
     if (response.ok === true) {
-
+        if (appName.includes("AppleWebKit")) {
+            window.location.replace(url);
+		}
+        
     } else {
         console.log("Error: ", response.status, data.erorrText);
     }
+
+    window.location.replace(redirectUrl);    
 }

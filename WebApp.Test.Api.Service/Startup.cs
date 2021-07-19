@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -38,23 +39,33 @@ namespace WebApp.Test.Api.Service
                     //optios.AccessDeniedPath = "/Home/AccessDeniedMy/";
                 })
                 .AddOpenIdConnect(CS, option => {
-                    option.Authority = "https://localhost:5001";
+                    option.Authority = "http://localhost:5000";
                     option.ClientId = "web_site";
                     option.ClientSecret = "web_site_secret";
+                    option.Scope.Add("web.site");
                     option.SaveTokens = true;
                     option.ResponseType = TYPE;
+                    option.UseTokenLifetime = true;
+                    option.RequireHttpsMetadata = false;
+                    // Получать клаймы в access_token
+                    option.GetClaimsFromUserInfoEndpoint = true;
+
+                    // Затягиваем клаймы в User Claim
+                    option.ClaimActions.MapJsonKey(ClaimTypes.Role, ClaimTypes.Role);
                 });
 
             services.AddAuthorization(config => {
                 config.AddPolicy("Administrator", config => {
                     config.RequireClaim(ClaimTypes.Role, "Administrator");
                 });
+
                 config.AddPolicy("User", config => {
                     config.RequireClaim(ClaimTypes.Role, "User");
                 });
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                .AddRazorRuntimeCompilation();
             services.AddHttpClient();
         }
 

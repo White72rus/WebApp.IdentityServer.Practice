@@ -22,8 +22,9 @@ namespace WebApp.Test.Api
             
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config => {
-                    config.Authority = "https://localhost:5001";
+                    config.Authority = "http://localhost:5000";
                     config.Audience = "smsis.portal";
+                    config.RequireHttpsMetadata = false;
                 });
 
             services.AddControllersWithViews();

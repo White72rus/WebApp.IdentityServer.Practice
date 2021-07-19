@@ -2,9 +2,13 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using WebApp.Test.Api.Service.ViewModel;
 
 namespace WebApp.IdentityServer.Controllers
 {
@@ -24,20 +28,41 @@ namespace WebApp.IdentityServer.Controllers
         }
 
         [Route("[action]")]
-        [Authorize(Policy = "User")]
+        [Authorize(Roles = "User")]
         public IActionResult Secret()
         {
             return View();
         }
 
         [Route("[action]")]
-        [Authorize]
-        //[Authorize(Policy = "Administrator")]
+        //[Authorize]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Admin()
         {
-            var jsonToken = await HttpContext.GetTokenAsync("access_token");
+            //var jsonToken = await HttpContext.GetTokenAsync("access_token");
 
-            var token = new JwtSecurityTokenHandler().ReadToken(jsonToken) as JwtSecurityToken;
+            //var token = new JwtSecurityTokenHandler().ReadToken(jsonToken) as JwtSecurityToken;
+
+            return View();
+        }
+
+        [Route("[action]")]
+        [Authorize]
+        public async Task<IActionResult> Claims()
+        {
+            var jsonTokenAccess = await HttpContext.GetTokenAsync("access_token");
+            var jsonTokenId = await HttpContext.GetTokenAsync("id_token");
+
+            //var token = new JwtSecurityTokenHandler().ReadToken(jsonToken) as JwtSecurityToken;
+
+            var userClaims = User.Claims;
+
+            List<ClaimsView> claims = new List<ClaimsView>();
+            claims.Add(new ClaimsView("Id token", jsonTokenId));
+            claims.Add(new ClaimsView("Access token", jsonTokenAccess));
+            claims.Add(new ClaimsView("User claims", userClaims));
+
+            ViewBag.Claims = claims;
 
             return View();
         }
