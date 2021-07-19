@@ -1,1 +1,65 @@
-﻿
+﻿* {
+    margin: 0;
+    box-sizing: border-box;
+    background-color: inherit;
+}
+
+.btn {
+    width: 100px;
+    height: 50px;
+    border-style: none;
+    font: normal 1.5rem / normal Consolas, sans-serif;
+    color: rgb(97, 97, 97);
+    transition: 1s ease-out;
+    cursor: pointer;
+    border-radius: 2px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.39);
+}
+
+.login-container {
+    position: relative;
+}
+
+.login-wrap {
+    position: fixed;
+    top: calc(50% - 200px);
+    left: calc(50% - 150px);
+    display: grid;
+    grid-template-rows: 65px 50px 65px 50px auto;
+    align-items: center;
+    justify-items: center;
+    height: 400px;
+    width: 300px;
+    /* background-color: rgb(66, 66, 66); */
+}
+
+input {
+    height: 50px;
+    width: auto;
+    border: solid 2px rgb(147, 184, 226);
+    font: normal 1.5rem / normal Consolas, sans-serif;
+    color: rgb(119, 119, 119);
+    border-radius: 2px;
+    padding: 0 10px;
+}
+
+.login {
+    margin: 0 10px;
+}
+
+.pass {
+    margin: 0 10px;
+}
+
+.login-submit-btn {
+    background-color: rgb(124, 172, 234);
+    outline: solid 4px rgba(79, 130, 224, 0);
+}
+
+    .login-submit-btn:focus {
+        outline: solid 4px rgba(65, 136, 218, 0.418);
+    }
+
+    .login-submit-btn:hover {
+        background-color: rgb(85, 117, 221);
+    }

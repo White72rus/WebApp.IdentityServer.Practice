@@ -1,0 +1,20 @@
+﻿@model WebApp.IdentityServer.ViewModel.LoginViewModel
+<h1>Login</h1>
+
+@*<form asp-controller="auht" asp-action="login" method="post">
+    <div asp-validation-summary="All"></div>*@
+
+    <div class="login-container">
+        <div class="login-wrap">
+            <input class="url" type="hidden" asp-for="ReturnUrl" />
+
+            <input class="login" placeholder="Login" asp-for="User" value="User" />
+            <span asp-validation-for="User"></span>
+
+            <input class="pass" placeholder="Password" asp-for="Password" value="qwe123" />
+            <span asp-validation-for="Password"></span>
+
+            <button class="btn login-submit-btn" >Login</button>
+        </div>
+    </div>
+@*</form>*@

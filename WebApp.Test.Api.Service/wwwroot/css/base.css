@@ -1,1 +1,94 @@
 ﻿
+* {
+    margin: 0;
+    -moz-box-sizing: inherit;
+    -webkit-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+html, body, .container, main {
+    box-sizing: border-box;
+    height: 100%;
+}
+
+footer {
+    position: fixed;
+    bottom: 0px;
+}
+
+.menu {
+    padding: 10px;
+    font: normal 20px/normal Consolas, sans-serif;
+    margin-top: 50px;
+}
+
+.menu > a {
+    text-decoration: none;
+}
+
+.data {
+    font: normal 18px/normal Consolas, sans-serif;
+    padding: 0 50px;
+}
+
+.claims-container {
+    background-color: rgb(35, 35, 35);
+    color: rgb(223, 223, 223);
+}
+
+.claims-base {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 10px;
+}
+
+.token-wrap {
+    height: 100%;
+    /* height: min-content; */
+    /* min-height: 200px; */
+    display: grid;
+    grid-template-rows: 50px 300px auto;
+}
+
+.header {
+    width: auto;
+    background-color: rgb(130, 236, 176);
+    padding: 0 50px;
+    display: grid;
+    align-content: center;
+}
+
+.header > p {
+    font: normal 26px/normal Consolas, sans-serif;
+    color: rgb(1,1,1);
+}
+
+.header > p > span {
+    color: rgb(243, 109, 84);
+}
+
+.token-str {
+    height: 300px;
+    width: 100%;
+}
+
+.token-str > textarea {
+    height: 100%;
+    width: 100%;
+    font: normal 14px/normal Consolas, sans-serif;
+    word-break: break-all;
+    resize: none;
+    color: rgb(142, 142, 142);
+    background-color: transparent;
+    border: solid 2px rgb(130, 236, 176);
+}
+
+.token-claims > p {
+    font: normal 17px/normal Consolas, sans-serif;
+    color: rgb(168, 168, 168);
+    padding: 0 10px;
+    word-break: break-all;
+    margin: 0 0 12px 0;
+    border: solid 1px rgb(52, 52, 52);
+    border-width: 0 0 1px 0;
+}
